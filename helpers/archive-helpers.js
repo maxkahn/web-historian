@@ -44,13 +44,24 @@ exports.addUrlToList = function(sitename, callback) {
   //append to textfile
   fs.appendFile(exports.paths.list, dataToAppend, function(err){
     if(err) throw err;
-    callback();
+    return callback();
   });
 };
 
-exports.isUrlArchived = function() {
-  
+exports.isUrlArchived = function(sitename, callback) {
+  fs.exists(exports.paths.archivedSites + '/' + sitename, function(exists){
+    return callback(exists);
+  });
 };
 
-exports.downloadUrls = function() {
+exports.downloadUrls = function(newsites) {
+  //ignore the sites.txt as we are instructed to take in an array of sites
+  //iterate over sites
+  for(var i = 0; i < newsites.length; i++){
+    //we only create the files, not populate them as spec is vague
+    fs.writeFile(exports.paths.archivedSites + '/' + newsites[i], '', function(err){
+      if(err) throw err;
+    });
+  }
+  //download sites to /sites archive
 };
