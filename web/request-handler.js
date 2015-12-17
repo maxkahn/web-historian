@@ -1,6 +1,7 @@
 var path = require('path');
 var archive = require('../helpers/archive-helpers');
 var fs = require('fs');
+var headers = require('./http-helpers');
 // require more modules/folders here!
 
 exports.handleRequest = function (req, res) {
@@ -21,12 +22,13 @@ exports.handleRequest = function (req, res) {
       if(exists){
         fs.readFile(filename, function(err, data){
           if(err) throw err;
+          res.writeHead(200, headers.headers);
           res.end(data);
         });
       }
       else{
         //return 404 error
-        res.writeHead(404);
+        res.writeHead(404, headers.headers);
         res.end(archive.paths.list);
       }
     });
@@ -44,7 +46,7 @@ exports.handleRequest = function (req, res) {
       var dataToAppend = dat[1];
 
       //return 302
-      res.writeHead(302);
+      res.writeHead(302, headers.headers);
 
       if(archive.isUrlInList(dataToAppend, function(exists){
         if(exists){
