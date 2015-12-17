@@ -34,7 +34,6 @@ exports.handleRequest = function (req, res) {
   }
   else if(req.method == 'POST'){
     //save the site
-    // fs.appendFile(archive.paths.list, )
     var body = '';
     req.on('data', function(data){
       body += data;
@@ -42,21 +41,33 @@ exports.handleRequest = function (req, res) {
     req.on('end', function(){
       //equal signs in text are interpreted as %3D thus this is valid splitting behaviour
       var dat = body.toString().split('=');
-      console.log(dat[1]);
-      var dataToAppend = dat[1] + '\n';
-
-      //append to textfile
-      fs.appendFile(archive.paths.list, dataToAppend, function(err){
-        if(err) throw err;
-      });
+      var dataToAppend = dat[1];
 
       //return 302
       res.writeHead(302);
-      res.end();
 
+      if(archive.isUrlInList(dataToAppend, function(exists){
+        if(exists){
+          fs.readFile(archive.paths.archivedSites + '/' + dataToAppend, function(err, data){
+            if(err) throw err;
+            res.end(data);
+          });
+        }
+        else{
+          //append to textfile
+          fs.appendFile(archive.paths.list, dataToAppend + '\n', function(err){
+            if(err) throw err;
+            archive.downloadUrls([dataToAppend]);
+
+            fs.readFile('./web/public/loading.html', function(err, data){
+              if(err) throw err;
+              res.end(data);
+            });
+          });
+
+        }
+      }));
     });
-
-    
   }
 
   

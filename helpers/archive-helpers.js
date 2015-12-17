@@ -59,7 +59,7 @@ exports.downloadUrls = function(newsites) {
   //iterate over sites
   for(var i = 0; i < newsites.length; i++){
     //we only create the files, not populate them as spec is vague
-    fs.writeFile(exports.paths.archivedSites + '/' + newsites[i], '', function(err){
+    fs.writeFile(exports.paths.archivedSites + '/' + newsites[i], 'data will be coming', function(err){
       if(err) throw err;
     });
   }
