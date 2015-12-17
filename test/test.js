@@ -99,12 +99,12 @@ describe("archive helpers", function(){
 
       archive.isUrlInList("example1.com", function (is) {
         expect(is);
-        if (++counter == total) { done() }
+        if (++counter == total) { done(); }
       });
 
       archive.isUrlInList("gibberish", function (is) {
         expect(!is);
-        if (++counter == total) { done() }
+        if (++counter == total) { done(); }
       });
     });
   });

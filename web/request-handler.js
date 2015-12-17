@@ -48,7 +48,6 @@ exports.handleRequest = function (req, res) {
       //append to textfile
       fs.appendFile(archive.paths.list, dataToAppend, function(err){
         if(err) throw err;
-        console.log('we tried to write!');
       });
 
       //return 302
