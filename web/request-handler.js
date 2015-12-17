@@ -1,4 +1,5 @@
 var path = require('path');
+var mime = require('mime');
 var archive = require('../helpers/archive-helpers');
 var fs = require('fs');
 var headers = require('./http-helpers');
@@ -7,18 +8,33 @@ var headers = require('./http-helpers');
 exports.handleRequest = function (req, res) {
 
   var filename = '';
+  headers.headers.ContentType = mime.lookup(req.url);
+  console.log(headers.headers.ContentType);
 
-  if(req.method == 'GET'){
-    if(req.url == '/'){
-      //the ./ makes it an absolute path
-      filename = './web/public/index.html';
-    }
-    else{
+  //***********************************************
+  //CLEANS REQUEST URL FOR FILE-NAME ALLOCATION
+  req.url = req.url.slice(1);
+  console.log(req.url);
+
+  if(req.url === ''){
+    //the ./ makes it an absolute path
+    filename = './web/public/index.html';
+  }
+  else{
+    var reg = /(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})/g;
+    //entered valid url
+    if(reg.exec(req.url)){
       filename = archive.paths.archivedSites +  req.url;
     }
+    else{
+      filename = './web/public/' + req.url;
+    }    
+  }
+  //************************************************
+
+  if(req.method == 'GET'){
 
     fs.exists(filename, function(exists){
-      console.log(filename);
       if(exists){
         fs.readFile(filename, function(err, data){
           if(err) throw err;
@@ -28,6 +44,7 @@ exports.handleRequest = function (req, res) {
       }
       else{
         //return 404 error
+         //get end of pathname use mime types
         res.writeHead(404, headers.headers);
         res.end(archive.paths.list);
       }
