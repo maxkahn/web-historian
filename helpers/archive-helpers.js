@@ -30,6 +30,10 @@ exports.initialize = function(pathsObj) {
 exports.readListOfUrls = function(callback) {
   fs.readFile(exports.paths.list, 'utf8', function(err, data){
     var urls = data.split('\n');
+    if(urls[urls.length -1].length <= 1){
+      urls.pop();
+    }
+    console.log(urls);
     return callback(urls);
   });
 };
@@ -64,7 +68,10 @@ exports.downloadUrls = function(newsites) {
    var options = {
       hostname: newsites[i],
       port: 80,
-      headers: helpers.headers
+      headers: helpers.headers,
+      rejectUnauthorized: false,
+      requestCert: true,
+      agent: false
     };
 
     //VOMITS INTO CONSOLE
@@ -72,11 +79,12 @@ exports.downloadUrls = function(newsites) {
       // console.log('STATUS: ' + res.statusCode);
       // console.log('HEADERS: ' + JSON.stringify(res.headers));
       var body = '';
-      res.setEncoding('utf8');
+      // res.setEncoding('utf8');
       res.on('data', function (chunk) {
         body += chunk;
       });
       res.on('end', function() {
+        console.log(body);
         fs.writeFile(exports.paths.archivedSites + '/' + options.hostname, body, function(err){
           if(err) throw err;
         });
