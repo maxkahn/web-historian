@@ -57,8 +57,14 @@ exports.handleRequest = function (req, res) {
           //append to textfile
           fs.appendFile(archive.paths.list, dataToAppend + '\n', function(err){
             if(err) throw err;
+            
+            //create page's file under sites
             archive.downloadUrls([dataToAppend]);
-
+            
+            //check whether page has loaded - by calling isUrlArchived and callback inside it
+              //if loaded, display site's own page
+              //else, display loading page
+            //read loading page
             fs.readFile('./web/public/loading.html', function(err, data){
               if(err) throw err;
               res.end(data);
