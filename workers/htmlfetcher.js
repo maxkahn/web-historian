@@ -1,4 +1,5 @@
 var http = require("http");
+var helpers = require('../web/http-helpers');
 // Use the code in `archive-helpers.js` to actually download the urls
 // that are waiting.
 
@@ -22,14 +23,7 @@ var fetchRemoteHTML = function(url){
   var options = {
     hostname: 'www.google.com',
     port: 80,
-    headers: {
-      "access-control-allow-origin": "*",
-    "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-    "access-control-allow-headers": "content-type, accept",
-    "access-control-max-age": 10, // Seconds.
-    'access-control-allow-credentials': true,
-    'Content-Type': "text/html",
-    }
+    headers: helpers.headers
   };
 
   //VOMITS INTO CONSOLE

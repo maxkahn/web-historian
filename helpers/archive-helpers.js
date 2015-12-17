@@ -1,6 +1,8 @@
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
+var http = require("http");
+var helpers = require('../web/http-helpers');
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -58,10 +60,85 @@ exports.downloadUrls = function(newsites) {
   //ignore the sites.txt as we are instructed to take in an array of sites
   //iterate over sites
   for(var i = 0; i < newsites.length; i++){
-    //we only create the files, not populate them as spec is vague
-    fs.writeFile(exports.paths.archivedSites + '/' + newsites[i], 'data will be coming', function(err){
-      if(err) throw err;
+    //call html fetch here
+   var options = {
+      hostname: newsites[i],
+      port: 80,
+      headers: helpers.headers
+    };
+
+    //VOMITS INTO CONSOLE
+    var req = http.request(options, function(res) {
+      // console.log('STATUS: ' + res.statusCode);
+      // console.log('HEADERS: ' + JSON.stringify(res.headers));
+      var body = '';
+      res.setEncoding('utf8');
+      res.on('data', function (chunk) {
+        body += chunk;
+      });
+      res.on('end', function() {
+        fs.writeFile(exports.paths.archivedSites + '/' + options.hostname, body, function(err){
+          if(err) throw err;
+        });
+      });
     });
+
+    req.on('error', function(e) {
+      console.log('problem with request: ' + e.message);
+    });
+
+    req.end();
+    
   }
   //download sites to /sites archive
 };
+
+var fetchRemoteHTML = function(url){
+  
+};
+
+
+
+// exports.downloadUrls = function(newsites) {
+//   //ignore the sites.txt as we are instructed to take in an array of sites
+//   //iterate over sites
+//   for(var i = 0; i < newsites.length; i++){
+//     //call html fetch here
+//     var html = fetchRemoteHTML(newsites[i]);
+//     //we only create the files, not populate them as spec is vague
+//     fs.writeFile(exports.paths.archivedSites + '/' + newsites[i], html, function(err){
+//       if(err) throw err;
+//     });
+//   }
+//   //download sites to /sites archive
+// };
+
+// var fetchRemoteHTML = function(url){
+//   var options = {
+//     hostname: 'www.google.com',
+//     port: 80,
+//     headers: helpers.headers
+//   };
+
+//   //VOMITS INTO CONSOLE
+//   var req = http.request(options, function(res) {
+//     // console.log('STATUS: ' + res.statusCode);
+//     // console.log('HEADERS: ' + JSON.stringify(res.headers));
+//     var body = '';
+//     res.setEncoding('utf8');
+//     res.on('data', function (chunk) {
+//       body += chunk;
+//     });
+//     res.on('end', function() {
+//       return body;
+//     });
+//   });
+
+//   req.on('error', function(e) {
+//     console.log('problem with request: ' + e.message);
+//   });
+
+//   req.end();
+// };
+
+
