@@ -3,6 +3,7 @@ var path = require('path');
 var _ = require('underscore');
 var http = require("http");
 var helpers = require('../web/http-helpers');
+var request = require('request');
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -24,16 +25,13 @@ exports.initialize = function(pathsObj) {
   });
 };
 
-// The following function names are provided to you to suggest how you might
-// modularize your code. Keep it clean!
-
 exports.readListOfUrls = function(callback) {
   fs.readFile(exports.paths.list, 'utf8', function(err, data){
     var urls = data.split('\n');
     if(urls[urls.length -1].length <= 1){
       urls.pop();
     }
-    console.log(urls);
+    //console.log(urls);
     return callback(urls);
   });
 };
@@ -74,29 +72,16 @@ exports.downloadUrls = function(newsites) {
       agent: false
     };
 
-    //VOMITS INTO CONSOLE
-    var req = http.request(options, function(res) {
-      // console.log('STATUS: ' + res.statusCode);
-      // console.log('HEADERS: ' + JSON.stringify(res.headers));
-      var body = '';
-      // res.setEncoding('utf8');
-      res.on('data', function (chunk) {
-        body += chunk;
-      });
-      res.on('end', function() {
-        console.log(body);
-        fs.writeFile(exports.paths.archivedSites + '/' + options.hostname, body, function(err){
-          if(err) throw err;
-        });
+    // console.log();
+
+    request('http://' + options.hostname, function (error, response, body) {
+      // console.log(body); // Show the HTML for the Google homepage. 
+      fs.writeFile(exports.paths.archivedSites + '/' + options.hostname, body, function(err) {
+        if (err) {
+          throw err;
+        }
       });
     });
-
-    req.on('error', function(e) {
-      console.log('problem with request: ' + e.message);
-    });
-
-    req.end();
-    
   }
   //download sites to /sites archive
 };
@@ -104,49 +89,3 @@ exports.downloadUrls = function(newsites) {
 var fetchRemoteHTML = function(url){
   
 };
-
-
-
-// exports.downloadUrls = function(newsites) {
-//   //ignore the sites.txt as we are instructed to take in an array of sites
-//   //iterate over sites
-//   for(var i = 0; i < newsites.length; i++){
-//     //call html fetch here
-//     var html = fetchRemoteHTML(newsites[i]);
-//     //we only create the files, not populate them as spec is vague
-//     fs.writeFile(exports.paths.archivedSites + '/' + newsites[i], html, function(err){
-//       if(err) throw err;
-//     });
-//   }
-//   //download sites to /sites archive
-// };
-
-// var fetchRemoteHTML = function(url){
-//   var options = {
-//     hostname: 'www.google.com',
-//     port: 80,
-//     headers: helpers.headers
-//   };
-
-//   //VOMITS INTO CONSOLE
-//   var req = http.request(options, function(res) {
-//     // console.log('STATUS: ' + res.statusCode);
-//     // console.log('HEADERS: ' + JSON.stringify(res.headers));
-//     var body = '';
-//     res.setEncoding('utf8');
-//     res.on('data', function (chunk) {
-//       body += chunk;
-//     });
-//     res.on('end', function() {
-//       return body;
-//     });
-//   });
-
-//   req.on('error', function(e) {
-//     console.log('problem with request: ' + e.message);
-//   });
-
-//   req.end();
-// };
-
-

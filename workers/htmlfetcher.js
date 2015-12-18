@@ -18,6 +18,10 @@ but the browsers native form handling will use form-encoding instead of JSON.
 You can either use jQuery to send JSON from the client, or modify the tests to send 
 form-encoded data
 */
-//NOT FINAL FORM OF METHOD
-//DO NOT FORGET TO REFACTOR
+
 archive.readListOfUrls(archive.downloadUrls);
+
+//running using crontab:
+//* * * * * /usr/local/bin/node /Users/student/Codes/2015-11-web-historian/workers/htmlfetcher.js
+
+

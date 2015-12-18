@@ -9,12 +9,12 @@ exports.handleRequest = function (req, res) {
 
   var filename = '';
   headers.headers.ContentType = mime.lookup(req.url);
-  console.log(headers.headers.ContentType);
+  //console.log(headers.headers.ContentType);
 
   //***********************************************
   //CLEANS REQUEST URL FOR FILE-NAME ALLOCATION
   req.url = req.url.slice(1);
-  console.log(req.url);
+  //console.log(req.url);
 
   if(req.url === ''){
     //the ./ makes it an absolute path
